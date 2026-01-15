@@ -1,10 +1,10 @@
-# PyLiteDB & Employee Manager 🚀
+# PyLiteDB & Employee Manager 
 
 A custom-built Relational Database Management System (RDBMS) from the ground up, featuring a SQL-like interface, persistent storage, and an integrated web dashboard.
-🌟 The Challenge
+## 🌟 The Challenge
 
 Most web applications use pre-built databases like PostgreSQL or SQLite. This project implements the Database Engine itself, handling everything from query parsing to data indexing and persistence.
-🛠️ Features
+## Features
 ## 1. Custom RDBMS Engine (pylite_db.py)
 
     * SQL Parser: Uses Regex-based tokenization to support CREATE, INSERT, SELECT, JOIN, and DELETE.
@@ -26,7 +26,18 @@ Most web applications use pre-built databases like PostgreSQL or SQLite. This pr
     Persistence Proof: Data remains intact across sessions.
 
 ##  Getting Started
-### Prerequisites
+### Live Demo
+
+* Explore the web UI for the database engine
+
+* Add new records
+
+* View joined table results
+
+### Interact with the system without running locally
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://blazinbanana.pythonanywhere.com/)
+
+### Prerequisites for running locally
 
     Python 3.x
 
