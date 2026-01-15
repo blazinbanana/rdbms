@@ -58,7 +58,7 @@ python pylite_db.py
 
 You can now run SQL-like queries directly from the web interface.
 ## 📂 Project Structure
-
+text
 
 .
 ├── app.py            # Flask web server and API logic
