@@ -1,3 +1,4 @@
+#Copyright 2026 Caleb Maina
 import json
 import os
 import re
@@ -8,7 +9,7 @@ class Table:
         self.columns = columns  # {"id": "int", "name": "str"}
         self.rows = []
         self.pk_column = pk_column
-        self.index = {}  # Hash Index for Primary Key {pk_val: row_data}
+        self.index = {}  # hash index for primary key {pk_val: row_data}
 
     def insert(self, values):
         if len(values) != len(self.columns):
@@ -16,7 +17,7 @@ class Table:
         
         row = dict(zip(self.columns.keys(), values))
         
-        # Unique Key Check / Indexing
+        #indexing
         if self.pk_column:
             pk_val = row[self.pk_column]
             if pk_val in self.index:
@@ -26,11 +27,11 @@ class Table:
         self.rows.append(row)
 
     def delete(self, col, val):
-        # Delete from rows
+        #delete from rows
         initial_len = len(self.rows)
         self.rows = [r for r in self.rows if str(r.get(col)) != str(val)]
         
-        # Rebuild Index if needed
+        #rebuild index if needed
         if self.pk_column and col == self.pk_column and len(self.rows) < initial_len:
             del self.index[val]
             
@@ -46,10 +47,10 @@ class Database:
             with open("db_meta.json", "r") as f:
                 meta = json.load(f)
                 for t_name, t_data in meta.items():
-                    # Reconstruct tables
+                    #reconstruct tables
                     t = Table(t_name, t_data['columns'], t_data.get('pk'))
                     t.rows = t_data['rows']
-                    # Rebuild index
+                    #rebuild index
                     if t.pk_column:
                         for row in t.rows:
                             t.index[row[t.pk_column]] = row
@@ -64,16 +65,16 @@ class Database:
     def execute(self, query):
         query = query.strip()
         
-        # 1. CREATE TABLE table (col1 type, col2 type) PRIMARY KEY col1
+        #create table
         match_create = re.match(r"CREATE TABLE (\w+) \((.*?)\)(?: PRIMARY KEY (\w+))?", query, re.IGNORECASE)
         if match_create:
             name, cols_str, pk = match_create.groups()
             
-            # --- FIX STARTS HERE ---
-            # Guard clause: If table exists, do nothing and return.
+            
+            #persist: If table exists, do nothing and return.
             if name in self.tables:
                 return f"Table '{name}' already exists. Skipping creation."
-            # --- FIX ENDS HERE ---
+            
 
             columns = {}
             for col_def in cols_str.split(','):
@@ -84,13 +85,13 @@ class Database:
             self.save_metadata()
             return f"Table '{name}' created."
 
-        # 2. INSERT INTO table VALUES (val1, val2)
+        #insert values to table
         match_insert = re.match(r"INSERT INTO (\w+) VALUES \((.*?)\)", query, re.IGNORECASE)
         if match_insert:
             name, vals_str = match_insert.groups()
             if name not in self.tables: return f"Error: Table {name} not found."
             
-            # Simple type conversion
+            #simple type conversion
             values = []
             for v in vals_str.split(','):
                 v = v.strip().strip("'").strip('"')
@@ -104,9 +105,9 @@ class Database:
             except ValueError as e:
                 return f"Error: {e}"
 
-        # 3. SELECT * FROM table [JOIN table2 ON col=col] [WHERE col=val]
+        #SELECT * FROM, Join 
         if query.upper().startswith("SELECT"):
-            # Simple parser for: SELECT * FROM t1 [JOIN t2 ON t1.c=t2.c] [WHERE c=v]
+            #simple parser for: SELECT * FROM t1 [JOIN t2 ON t1.c=t2.c] [WHERE c=v]
             parts = query.split()
             t_name = parts[3]
             
@@ -114,7 +115,7 @@ class Database:
             
             result = self.tables[t_name].rows
             
-            # Handle JOIN (Nested Loop Join)
+            #nested loop join
             if "JOIN" in parts:
                 join_idx = parts.index("JOIN")
                 t2_name = parts[join_idx + 1]
@@ -128,19 +129,19 @@ class Database:
                 for r1 in result:
                     for r2 in self.tables[t2_name].rows:
                         if str(r1[left_col]) == str(r2[right_col]):
-                            # Merge dicts
+                            # merge dicts
                             new_row = {**r1, **{f"{t2_name}_{k}": v for k, v in r2.items()}}
                             joined_rows.append(new_row)
                 result = joined_rows
 
-            # Handle WHERE (Linear Scan or Index Lookup)
+            #linear scan or index lookup
             if "WHERE" in parts:
                 where_idx = parts.index("WHERE")
                 cond = parts[where_idx + 1]
                 col, val = cond.split('=')
                 val = val.strip("'").strip('"')
                 
-                # Check if we can use Index (Primary Key lookup)
+                #primary Key lookup
                 table_obj = self.tables[t_name]
                 if table_obj.pk_column == col and "JOIN" not in parts:
                      # O(1) Lookup
@@ -152,7 +153,7 @@ class Database:
 
             return result
 
-        # 4. DELETE FROM table WHERE col=val
+        #delete from table
         match_delete = re.match(r"DELETE FROM (\w+) WHERE (\w+)=(.*)", query, re.IGNORECASE)
         if match_delete:
             name, col, val = match_delete.groups()
@@ -165,7 +166,7 @@ class Database:
 
         return "Syntax Error or Unknown Command"
 
-# REPL Mode
+#REPL mode
 if __name__ == "__main__":
     db = Database()
     print("PyLiteDB v1.0 - Type 'exit' to quit")

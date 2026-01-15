@@ -1,19 +1,20 @@
+#Copyright 2026 Caleb Maina
 from flask import Flask, render_template_string, request, redirect, url_for
 from pylite_db import Database
 
 app = Flask(__name__)
 db = Database()
 
-# Ensure tables exist on startup
+#ensure tables exist on startup
 db.execute("CREATE TABLE employees (id int, name str, dept str) PRIMARY KEY id")
 db.execute("CREATE TABLE departments (name str, location str) PRIMARY KEY name")
 
-# Seed some data if empty
+#seed some data if empty
 if not db.execute("SELECT * FROM departments"):
     db.execute("INSERT INTO departments VALUES ('Engineering', 'Building A')")
     db.execute("INSERT INTO departments VALUES ('HR', 'Building B')")
 
-# HTML Template (Inline for simplicity)
+#HTML Template
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
@@ -81,15 +82,15 @@ HTML_TEMPLATE = """
 
 @app.route("/")
 def index():
-    # Demonstrating the JOIN functionality
-    # Joining employees with departments to show location
+    #demo for JOIN
+    #joining employees with departments to show location
     query = "SELECT * FROM employees JOIN departments ON employees.dept=departments.name"
     rows = db.execute(query)
     
-    # Get departments for the dropdown
+    #get departments for the dropdown
     depts = db.execute("SELECT * FROM departments")
     
-    # Handle case where database returns simple string on empty/error
+    #handle case where database returns simple string on empty/error
     if isinstance(rows, str): rows = []
     if isinstance(depts, str): depts = []
     
