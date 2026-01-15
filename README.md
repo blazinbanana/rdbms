@@ -57,14 +57,6 @@ python pylite_db.py
     http://localhost:5000
 
 You can now run SQL-like queries directly from the web interface.
-## 📂 Project Structure
 
-.
-├── app.py # Flask web server and API logic
-├── pylite_db.py # Core database engine and SQL parser
-├── db_meta.json # Persistent storage (auto-generated)
-├── requirements.txt # Project dependencies
-├── README.md
-└── .gitignore
 
 **Copyright 2026 Caleb Maina**
