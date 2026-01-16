@@ -43,12 +43,22 @@ Most web applications use pre-built databases like PostgreSQL or SQLite. This pr
 
     Flask (pip install flask)
 
+
 ### Running the Database REPL
-
 To interact with the engine directly:
-bash
-
+```bash
 python pylite_db.py
+```
+
+## Try these commands:
+```bash
+
+    CREATE TABLE users (id int, name str) PRIMARY KEY id
+
+    INSERT INTO users VALUES (1, "Alice")
+
+    SELECT * FROM users WHERE id=1
+```
 
 ## ▶️ Running the Web App
 
